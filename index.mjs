@@ -8,7 +8,7 @@ global.__basedir = process.cwd();
 dotenv.config();
 
 const snoowrap = new Snoowrap({
-    userAgent: 'reddit-bot-example-node',
+    userAgent: 'script:uynewsbot:v1.0.0 (by /u/zonan)',
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     username: process.env.REDDIT_USER,
