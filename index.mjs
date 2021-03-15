@@ -17,22 +17,30 @@ const snoowrap = new Snoowrap({
 
 const client1 = new SnooStorm.SubmissionStream(snoowrap, {
     subreddit: 'uynewsbottest',
-    limit: 10,
-    pollTime: 1000 * 60
+    limit: 60,
+    pollTime: 1000 * 60 * 3
 });
-
 client1.on('item', processTheDamnItem);
 
 setTimeout(function() {
     const client2 = new SnooStorm.SubmissionStream(snoowrap, {
         subreddit: 'uruguay',
-        limit: 40,
-        pollTime: 1000 * 60 // 30 secs
+        limit: 20,
+        pollTime: 1000 * 60 // cada un minutillo
     });
 
     client2.on('item', processTheDamnItem);
-}, 30000)
+}, 15000)
 
+setTimeout(function() {
+    const client3 = new SnooStorm.SubmissionStream(snoowrap, {
+        subreddit: 'rou',
+        limit: 20,
+        pollTime: 1000 * 60 // cada un minutillo
+    });
+
+    client3.on('item', processTheDamnItem);
+}, 30000)
 
 
 
