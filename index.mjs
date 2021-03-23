@@ -50,7 +50,7 @@ setTimeout(function() {
     });
 
     clientFobal.on('item', processTheDamnItem);
-}, 30000)
+}, 45000)
 
 async function processTheDamnItem(rPost) {
     try {
