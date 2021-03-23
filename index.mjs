@@ -42,7 +42,15 @@ setTimeout(function() {
     client3.on('item', processTheDamnItem);
 }, 30000)
 
+setTimeout(function() {
+    const clientFobal = new SnooStorm.SubmissionStream(snoowrap, {
+        subreddit: 'fobaluru',
+        limit: 20,
+        pollTime: 1000 * 120  // cada un minutillo y medio
+    });
 
+    clientFobal.on('item', processTheDamnItem);
+}, 30000)
 
 async function processTheDamnItem(rPost) {
     try {
