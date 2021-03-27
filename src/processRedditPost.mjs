@@ -1,5 +1,4 @@
 import {checkIfProcessed, flagAsProcessed} from './botState.mjs';
-import {getCanonicalURL} from './canonical.mjs';
 import parsePage from './PageParser/index.mjs';
 import articlePostProcessor from './articlePostProcessor.mjs';
 
@@ -18,20 +17,10 @@ export default async function processRedditPost(rPost) {
             console.log('post is not a link', rPost.id);
         }
 
-        const finalUrl = await getCanonicalURL(rPost.url_overridden_by_dest);
-        if (rPost.url_overridden_by_dest !== finalUrl) {
-            console.log(
-                'canonicalizing',
-                'Original',
-                rPost.url_overridden_by_dest,
-                'New',
-                finalUrl
-            );
-        }
-
-        const pageParserResult = await parsePage(finalUrl);
+        const postUrl = rPost.url_overridden_by_dest;
+        const pageParserResult = await parsePage(postUrl);
         if (!pageParserResult.success) {
-            console.log('Error in process', rPost.id, finalUrl, pageParserResult.error);
+            console.log('Error in process', rPost.id, postUrl, pageParserResult.error);
             return;
         }
 
@@ -40,7 +29,7 @@ export default async function processRedditPost(rPost) {
         );
 
         await rPost.reply(finalTextComment);
-        console.log('processed', rPost.id, finalUrl);
+        console.log('processed', rPost.id, postUrl);
         await flagAsProcessed(rPost);
 
     } catch(e) {

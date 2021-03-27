@@ -18,10 +18,11 @@ const snoowrap = new Snoowrap({
 
 function registerClient(clientConfig) {
     console.log('Registering', clientConfig);
+    const isTestMode = nconf.get('environment') === 'test';
     const client = new SnooStorm.SubmissionStream(snoowrap, {
         subreddit: clientConfig.id,
         limit: clientConfig.limit,
-        pollTime: clientConfig.frequencyInMs
+        pollTime: isTestMode ? 30000 : clientConfig.frequencyInMs
     });
     client.on('item', processRedditPost);
 }
@@ -34,7 +35,9 @@ async function registerClients() {
 
     for (const client of finalClients) {
         registerClient(client);
-        await new Promise(resolve => setTimeout(resolve, waitTimeBetweenRegistrations));
+        if (!isTestMode) {
+            await new Promise(resolve => setTimeout(resolve, waitTimeBetweenRegistrations));
+        }
     }
 }
 

@@ -15,6 +15,7 @@ import PageParserBase from "./PageParserBase.mjs";
 import Subrayadocomuy from "./subrayadocomuy.mjs";
 import Teledocecomuy from "./teledocecomuy.mjs";
 import _ from 'lodash';
+import {getCanonicalURL} from "../canonical.mjs";
 
 
 export default async function parsePage(url) {
@@ -44,5 +45,17 @@ export default async function parsePage(url) {
     if (!ProcessorClass) {
         return PageParserBase.createError('no matches');
     }
-    return new ProcessorClass(url).fetch();
+
+    const finalUrl = await getCanonicalURL(url);
+    if (url !== finalUrl) {
+        console.log(
+            'canonicalizing',
+            'Original',
+            url,
+            'New',
+            finalUrl
+        );
+    }
+
+    return new ProcessorClass(finalUrl).fetch();
 }
