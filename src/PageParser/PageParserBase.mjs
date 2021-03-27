@@ -1,9 +1,9 @@
-import JSDOM from 'jsdom';
 import Readability from '@mozilla/readability';
-import axios from "axios";
+import axios from 'axios';
 import some from 'lodash/some.js';
 import h2m from 'h2m';
-import jQuery from "jquery";
+import jQuery from 'jquery';
+import buildJSDOM from '../JSDOMBuilder.mjs';
 
 export default class PageParserBase {
     static domainMatcher = [];
@@ -75,33 +75,33 @@ export default class PageParserBase {
     }
 
     async fetch() {
+        const time = new Date().toString();
         const page = await this._fetch(this._url);
         let data;
         if (!page.success) {
-            console.error('Failure in fetching content', page.error);
+            return PageParserBase.createError(page.error || 'Not Parseable by readability');
         }
 
         data = page.data;
         this._originalContent = page.data;
         data = this.afterFetchFilter(data);
 
-        let doc = new JSDOM.JSDOM(
-            data,
-            {
-                features: {
-                    FetchExternalResources: false,
-                    ProcessExternalResources: false
-                }
-            }
-        );
+        let doc = buildJSDOM(data);
+
         this._paywallDetected = this.checkPaywalJSDOM(doc);
 
         doc = this.domFilter(doc);
 
-        const isProbablyReaderable = Readability.isProbablyReaderable(doc.window.document);
+        const isProbablyReaderable = Readability.isProbablyReaderable(
+            doc.window.document,
+            {
+                minScore: 15,
+                minContentLength: 100
+            }
+        );
 
         if (!isProbablyReaderable) {
-            PageParserBase.createError('Not Parseable by readability');
+            return PageParserBase.createError('Not Parseable by readability');
         }
 
         let article = new Readability.Readability(
@@ -119,7 +119,9 @@ export default class PageParserBase {
             contentAsMd: h2m(article.content, this.h2mConfig),
             byline: article.byline,
             title: article.title,
-            siteName: article.siteName
+            siteName: article.siteName,
+            url: this._url,
+            date: time
         };
     }
 
@@ -128,10 +130,18 @@ export default class PageParserBase {
             url,
             {
                 headers: {
-                    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/80.2.3.5 Safari/537.36'
+                    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/80.2.3.6 Safari/537.36'
                 }
             }
         );
+
+        if ((result.headers['content-type'] + '').indexOf('text/') === -1) {
+            return {
+                success: false,
+                error: 'It\'s not text content. Sorry oldhotdog'
+            };
+        }
+
         return {
             success: true,
             data: result.data
@@ -144,8 +154,8 @@ export default class PageParserBase {
         };
     }
     static match(pUrl) {
-        var url = new URL(pUrl);
-        var hostname = url.hostname.toLowerCase().trim();
+        const url = new URL(pUrl);
+        const hostname = url.hostname.toLowerCase().trim();
         return some(this.domainMatcher, function(d) {
             const domainToMatch = d.toLowerCase().trim();
             return domainToMatch === hostname || hostname.endsWith(`.${domainToMatch}`);

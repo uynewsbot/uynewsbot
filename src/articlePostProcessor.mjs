@@ -1,4 +1,5 @@
-import stripHtml from "string-strip-html";
+import stripHtml from 'string-strip-html';
+import nconf from 'nconf';
 
 const MAX_LENGTH = 9200;
 const truncateContent = (input) => input.length > MAX_LENGTH ? `${input.substring(0, MAX_LENGTH)}...(Truncado)` : input;
@@ -10,12 +11,12 @@ function sanitizeTitleLine(pInput) {
     return sanitizedInput.trim();
 
 }
-export default function articlePostProcessor(articleContent, extraData) {
-    var titleParts = [];
 
-    var siteName = sanitizeTitleLine(extraData.siteName);
-    var title = sanitizeTitleLine(extraData.title);
-    var byline = sanitizeTitleLine(extraData.byline);
+function buildTitleLink(article) {
+    const titleParts = [];
+    const siteName = (sanitizeTitleLine(article.siteName) || '').trim();
+    const title = sanitizeTitleLine(article.title);
+    const byline = (sanitizeTitleLine(article.byline) || '').trim();
 
     if (siteName && siteName !== 'mysitename') { //Busqueda, WTF? srsly?
         titleParts.push(siteName);
@@ -24,22 +25,25 @@ export default function articlePostProcessor(articleContent, extraData) {
         titleParts.push(title);
     }
     if (byline && byline !== siteName) {
-        titleParts.push('Por: ' + byline);
+        titleParts.push('Autor: ' + byline);
     }
 
-    var finalContent = '[' + (titleParts.join(' - ')
+    return '[' + (titleParts.join(' - ')
         .replace(/\[/g, '')
         .replace(/\]/g, '')
         .replace(/\(/g, '')
-        .replace(/\)/g, '')) + '](' + extraData.source + ')';
-    finalContent += `\n\n^(Fecha del snapshot: ${extraData.date.replace(/\([\s\S]*?\)/g, '')})`;
-    finalContent += `\n\n### Texto de la noticia:\n\n`;
-    finalContent += truncateContent(articleContent);
-    finalContent += '\n\n___';
-    finalContent += '\n\nbot by: /u/zonan';
+        .replace(/\)/g, '')) + '](' + article.url + ')';
+}
 
-    if (extraData.paywall) {
-        finalContent += '\n\n^(Texto posiblemente truncado por paywall)';
+export default function articlePostProcessor(article) {
+    let finalContent = buildTitleLink(article);
+    finalContent += `\n\n### Texto del artículo:\n\n`;
+    finalContent += truncateContent(article.contentAsMd);
+    finalContent += '\n\n___';
+    finalContent += `\n\n^(Snapshot: ${article.date.replace(/\([\s\S]*?\)/g, '')})`;
+    finalContent +=`\n\n^Bot ^by ^/u/zonan ^(Versión: ${nconf.get('bot:version')})`;
+    if (article.paywall) {
+        finalContent += '\n\n^(Texto posiblemente truncado por paywall no eludible)';
     }
     return finalContent;
 }

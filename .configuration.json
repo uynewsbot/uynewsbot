@@ -1,0 +1,29 @@
+{
+  "bot": {
+    "userAgent": "script:uynewsbottest:v2.0.0 (by /u/zonan)",
+    "version": "2.0.0"
+  },
+  "subreddits": [
+    {
+      "id": "uruguay",
+      "frequencyInMs": 60000,
+      "limit": 20
+    },
+    {
+      "id": "rou",
+      "frequencyInMs": 180000,
+      "limit": 30
+    },
+    {
+      "id": "fobaluru",
+      "frequencyInMs": 180000,
+      "limit": 30
+    },
+    {
+      "id": "uynewsbottest",
+      "frequencyInMs": 120000,
+      "testmode": true,
+      "limit": 100
+    }
+  ]
+}

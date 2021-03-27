@@ -26,4 +26,14 @@ export default class Elpaiscomuy extends PageParserBase {
         const $ = jQuery(dom.window);
         return $('contenido-exclusivo-nota.box-ui').length > 0
     }
+    static match(pUrl) {
+        const matchDomain = super.match(pUrl);
+        if (!matchDomain) {
+            return false;
+        }
+        const url = new URL(pUrl);
+
+        // Multimedia articles are 100% js widgets
+        return url.pathname.indexOf('/multimedia/') === -1;
+    }
 }

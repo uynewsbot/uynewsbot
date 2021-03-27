@@ -10,18 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mozilla/readability": "^0.4.1",
-    "axios": "^0.21.1",
-    "dotenv": "^8.2.0",
-    "h2m": "^0.7.0",
-    "jquery": "^3.6.0",
-    "jsdom": "^16.5.0",
-    "lodash": "^4.17.21",
-    "snoostorm": "^1.5.2",
-    "snoowrap": "^1.22.0",
-    "string-strip-html": "^8.2.4"
+    "@mozilla/readability": "0.4.1",
+    "axios": "0.21.1",
+    "h2m": "0.7.0",
+    "jquery": "3.6.0",
+    "jsdom": "16.5.0",
+    "lodash": "4.17.21",
+    "nconf": "0.11.2",
+    "snoostorm": "1.5.2",
+    "snoowrap": "1.22.0",
+    "string-strip-html": "8.2.4"
   },
   "devDependencies": {
-    "eslint": "^7.22.0"
+    "eslint": "7.22.0"
   }
 }
