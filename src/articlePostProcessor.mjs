@@ -40,10 +40,11 @@ export default function articlePostProcessor(article) {
     finalContent += `\n\n### Texto del artículo:\n\n`;
     finalContent += truncateContent(article.contentAsMd);
     finalContent += '\n\n___';
+    if (article.paywallDetected) {
+        finalContent += '\n\n^(Texto posiblemente truncado por paywall)';
+    }
     finalContent += `\n\n^(Snapshot: ${article.date.replace(/\([\s\S]*?\)/g, '')})`;
     finalContent +=`\n\n^Bot ^by ^/u/zonan ^(Versión: ${nconf.get('bot:version')})`;
-    if (article.paywall) {
-        finalContent += '\n\n^(Texto posiblemente truncado por paywall no eludible)';
-    }
+
     return finalContent;
 }

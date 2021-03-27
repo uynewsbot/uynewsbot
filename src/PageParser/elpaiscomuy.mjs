@@ -24,7 +24,7 @@ export default class Elpaiscomuy extends PageParserBase {
     ];
     checkPaywalJSDOM(dom) {
         const $ = jQuery(dom.window);
-        return $('contenido-exclusivo-nota.box-ui').length > 0
+        return $('.contenido-exclusivo-nota.box-ui').length > 0
     }
     static match(pUrl) {
         const matchDomain = super.match(pUrl);
