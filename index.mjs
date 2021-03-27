@@ -2,8 +2,9 @@ import Snoowrap from 'snoowrap';
 import SnooStorm from 'snoostorm';
 import nconf from 'nconf';
 
-nconf.file({ file: '.configuration.json' })
-    .file({ file: '.credentials.json' });
+global.__basedir = process.cwd();
+nconf.file('conf', '.configuration.json' )
+    .file('credentials', '.credentials.json');
 
 import processRedditPost from './src/processRedditPost.mjs';
 
