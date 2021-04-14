@@ -44,7 +44,7 @@ export default function articlePostProcessor(article) {
         finalContent += '\n\n^(Texto posiblemente truncado por paywall)';
     }
     finalContent += `\n\n^(Snapshot: ${article.date.replace(/\([\s\S]*?\)/g, '')})`;
-    finalContent +=`\n\n^Bot ^by ^/u/zonan ^(Versión: ${nconf.get('bot:version')})`;
+    finalContent +=`\n\n[Bot looking for new master.](https://www.reddit.com/r/uruguay/comments/mqtxgv/se_busca_dev_ops_para_el_uynewsbot/)(Versión: ${nconf.get('bot:version')})`;
 
     return finalContent;
 }
